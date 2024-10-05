@@ -77,7 +77,8 @@ function _buildAnnVSData(rrData, verSet, v, rowData) {
 			var [sx, id] = ref;
 			rrData[sx]["" + id] = {
 				"name": strat.strat,
-				"record": rowData[sx].values[id][1],
+				"record": rowData[sx].values[id][1].value,
+				"link": rowData[sx].values[id][1].link,
 				"ver": v
 			}
 		}
@@ -114,11 +115,14 @@ function timesRowId(rowId, xcamData) {
 	var timeList = [];
 	var playerTotal = xcamData.values[0].length;
 	for (let i = 0; i < playerTotal; i++) {
-		var fillText = xcamData.values[rowId + 1][i];
+		if (xcamData.values[rowId + 1][i] === undefined) continue;
+		var fillText = xcamData.values[rowId + 1][i].value;
 		var fillTime = rawMS(fillText);
 		if (fillTime !== null) {
 			timeList.push({
-				"player": xcamData.values[0][i],
+				"player": xcamData.values[0][i].value,
+				"link": xcamData.values[0][i].link,
+				"note": xcamData.values[0][i].note,
 				"ms": fillTime
 			})
 		}
