@@ -121,8 +121,8 @@ function timesRowId(rowId, xcamData) {
 		if (fillTime !== null) {
 			timeList.push({
 				"player": xcamData.values[0][i].value,
-				"link": xcamData.values[0][i].link,
-				"note": xcamData.values[0][i].note,
+				"link": xcamData.values[rowId + 1][i].link,
+				"note": xcamData.values[rowId + 1][i].note,
 				"ms": fillTime
 			})
 		}
