@@ -17,6 +17,7 @@ function _secMS(secText) {
 		return parseInt(secText) * 100;
 	}
 	var ft = secText.split('.');
+	if (ft[1].length === 1) return (parseInt(ft[0]) * 100) + (parseInt(ft[1]) * 10);
 	return (parseInt(ft[0]) * 100) + parseInt(ft[1]);
 }
 
@@ -38,7 +39,7 @@ function rawMS(fillText) {
 				return (parseInt(ft[0]) * 6000) + (parseInt(ft[1]) * 100) + parseInt(ft[2]);
 			}
 			// the fizz fix (ttm100c us, 1::41.73)
-			ft[1] = ft[2]; 
+			ft[1] = ft[2];
 		}
 		var min = parseInt(ft[0]);
 		var sec = _secMS(ft[1]);
@@ -50,24 +51,26 @@ function rawMS(fillText) {
 
 	// verification
 
-/*function verifyRows(rowData) {
+function verifyRows(rowData) {
 	for (let i = 0; i < 17; i++) {
 		if (strats.orgData[i].ext) continue;
 		// main check
 		var cId = strats.orgData[i].checkId;
 		var checkName = strats.orgData[i].name;
 		var checkStr = rowData["main"].values[cId][0];
-		if (checkStr === undefined || !checkStr.includes(checkName)) {
+		if (checkStr === undefined || !checkStr.value.includes(checkName)) {
+			console.log("Xcam Data desync for " + checkName + " - found " + checkStr);
 			throw new Error("Xcam Data desync for " + checkName + " - found " + checkStr);
 		}
 		// ext check
 		var eId = strats.orgData[i].extCheckId;
 		var extStr = rowData["ext"].values[eId][0];
-		if (extStr === undefined || !extStr.includes(checkName)) {
+		if (extStr === undefined || !extStr.value.includes(checkName)) {
+			console.log("Extension Data desync for " + checkName + " - found " + checkStr);
 			throw new Error("Extension Data desync for " + checkName + " - found " + extStr);
 		}
 	}
-}*/
+}
 
 	// row-specific (not strat specific) data
 
@@ -75,10 +78,16 @@ function _buildAnnVSData(rrData, verSet, v, rowData) {
 	for (const strat of verSet) {
 		for (const ref of strat.idList) {
 			var [sx, id] = ref;
+			var record = "1:39.96";
+			var link = "";
+			if (rowData[sx].values[id] !== undefined) {
+				record = rowData[sx].values[id][1].value;
+				link = rowData[sx].values[id][1].link;
+			}
 			rrData[sx]["" + id] = {
 				"name": strat.strat,
-				"record": rowData[sx].values[id][1].value,
-				"link": rowData[sx].values[id][1].link,
+				"record": record,
+				"link": link,
 				"ver": v
 			}
 		}
@@ -115,6 +124,7 @@ function timesRowId(rowId, xcamData) {
 	var timeList = [];
 	var playerTotal = xcamData.values[0].length;
 	for (let i = 0; i < playerTotal; i++) {
+		if (xcamData.values[rowId + 1] === undefined) continue;
 		if (xcamData.values[rowId + 1][i] === undefined) continue;
 		var fillText = xcamData.values[rowId + 1][i].value;
 		var fillTime = rawMS(fillText);
@@ -165,13 +175,16 @@ function genRowData(rowData, xcamData) {
 }
 
 function genXcamData(rowData, xcamData) {
-	// read xcam data 
+	// read xcam data
 	var flatData = strats.flatData();
 	return dumpAllXcamData(flatData, xcamData);
 }
 
+
+
 module.exports = {
 	rawMS: rawMS,
+	verifyRowData: verifyRows,
 	genRowData: genRowData,
 	genXcamData: genXcamData
 }

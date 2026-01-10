@@ -9,10 +9,6 @@ const dump = require('./dump.js');
 const fs = require("fs");
 const https = require("https");
 
-const KEY = fs.readFileSync('key.pem');
-const CERT = fs.readFileSync('cert.pem');
-const credentials = { "key": KEY, "cert": CERT };
-
 	// EXPRESS SERVER constants
 const express = require('express');
 const cors = require('cors');
@@ -45,7 +41,7 @@ async function readXSheet(sheetId, range) {
 	const sheets = google.sheets({ version: 'v4', auth: API_KEY });
 	var response = await sheets.spreadsheets.values.get({
 		spreadsheetId: sheetId,
-		range: range 
+		range: range
 	});
 	return response.data;
 }
@@ -86,11 +82,11 @@ async function readAllXcamData() {
 	var ULT_ID = '1J20aivGnvLlAuyRIMMclIFUmrkHXUzgcDmYa31gdtCI';
  	var EXT_ID = '1X06GJL2BCy9AXjiV9Y8y-7KKkj4d9YI3dtTb2HVOyRs';
 
-	var rd1 = await readXSheetFull(ULT_ID, 'Ultimate Star Spreadsheet v2!A2:E526');
-	var xd1 = await readXSheetFull(ULT_ID, 'Ultimate Star Spreadsheet v2!M1:526');
-	var rd2 = await readXSheetFull(EXT_ID, 'Ultimate Sheet Extensions!A2:E248');
-	var xd2 = await readXSheetFull(EXT_ID, 'Ultimate Sheet Extensions!M1:248');
-	
+	var rd1 = await readXSheetFull(ULT_ID, 'Ultimate Star Spreadsheet v2!A2:E600');
+	var xd1 = await readXSheetFull(ULT_ID, 'Ultimate Star Spreadsheet v2!L1:600');
+	var rd2 = await readXSheetFull(EXT_ID, 'Ultimate Sheet Extensions!A2:E330');
+	var xd2 = await readXSheetFull(EXT_ID, 'Ultimate Sheet Extensions!L1:330');
+
 	rowData = { "main": rd1, "ext": rd2 };
 	xcamData = { "main": xd1, "ext": xd2 };
 	return [rowData, xcamData];
@@ -98,8 +94,11 @@ async function readAllXcamData() {
 
 async function dumpXcamData() {
 	var [rowData, xcamData] = await readAllXcamData();
+	dump.verifyRowData(rowData);
 	var dumpRowData = dump.genRowData(rowData, xcamData);
+	console.log("row dump done");
 	var dumpXcamData = dump.genXcamData(rowData, xcamData);
+	console.log("xcam dump done");
 	return [dumpRowData, dumpXcamData];
 }
 
