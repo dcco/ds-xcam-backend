@@ -81,25 +81,27 @@ async function readXSheetFull(sheetId, range) {
 async function readAllXcamData() {
 	var ULT_ID = '1J20aivGnvLlAuyRIMMclIFUmrkHXUzgcDmYa31gdtCI';
  	var EXT_ID = '1X06GJL2BCy9AXjiV9Y8y-7KKkj4d9YI3dtTb2HVOyRs';
+ 	var INFO_ID = '1zhEY1oSb4N8BfRh03PGeyvQpsQWk-lwDGx26Ttqmm9M';
 
-	var rd1 = await readXSheetFull(ULT_ID, 'Ultimate Star Spreadsheet v2!A2:E600');
-	var xd1 = await readXSheetFull(ULT_ID, 'Ultimate Star Spreadsheet v2!L1:600');
-	var rd2 = await readXSheetFull(EXT_ID, 'Ultimate Sheet Extensions!A2:E330');
-	var xd2 = await readXSheetFull(EXT_ID, 'Ultimate Sheet Extensions!L1:330');
+	var rd1 = await readXSheetFull(ULT_ID, 'Ultimate Star Spreadsheet v2!A2:E650');
+	var xd1 = await readXSheetFull(ULT_ID, 'Ultimate Star Spreadsheet v2!L1:650');
+	var rd2 = await readXSheetFull(EXT_ID, 'Ultimate Sheet Extensions!A2:E350');
+	var xd2 = await readXSheetFull(EXT_ID, 'Ultimate Sheet Extensions!L1:350');
+	var exData = await readXSheetFull(INFO_ID, 'Main!A3:E25');
 
 	rowData = { "main": rd1, "ext": rd2 };
 	xcamData = { "main": xd1, "ext": xd2 };
-	return [rowData, xcamData];
+	return [rowData, xcamData, { "extra": exData }];
 }
 
 async function dumpXcamData() {
-	var [rowData, xcamData] = await readAllXcamData();
+	var [rowData, xcamData, exData] = await readAllXcamData();
 	dump.verifyRowData(rowData);
 	var dumpRowData = dump.genRowData(rowData, xcamData);
 	console.log("row dump done");
 	var dumpXcamData = dump.genXcamData(rowData, xcamData);
 	console.log("xcam dump done");
-	return [dumpRowData, dumpXcamData];
+	return [dumpRowData, dumpXcamData, exData];
 }
 
 function responseWrap(f) {
