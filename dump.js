@@ -79,15 +79,18 @@ function _buildAnnVSData(rrData, verSet, v, rowData) {
 		for (const ref of strat.idList) {
 			var [sx, id] = ref;
 			var record = "1:39.96";
-			var link = "";
+			var recordPlayer = "Nobody";
+			var ideal = "";
 			if (rowData[sx].values[id] !== undefined) {
-				record = rowData[sx].values[id][1].value;
-				link = rowData[sx].values[id][1].link;
+				record = rowData[sx].values[id][1];
+				recordPlayer = rowData[sx].values[id][2];
+				ideal = rowData[sx].values[id][3];
 			}
 			rrData[sx]["" + id] = {
 				"name": strat.strat,
 				"record": record,
-				"link": link,
+				"recordPlayer": recordPlayer,
+				"ideal": ideal,
 				"ver": v
 			}
 		}
