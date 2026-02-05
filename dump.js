@@ -93,6 +93,7 @@ function _buildAnnVSData(rrData, verSet, v, rowData) {
 			rrData[sx]["" + id] = {
 				"name": strat.strat,
 				"record": record,
+				"link": link,
 				"recordPlayer": recordPlayer,
 				"ideal": ideal,
 				"idealLink": idealLink,
