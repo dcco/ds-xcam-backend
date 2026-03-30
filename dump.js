@@ -135,16 +135,22 @@ function timesRowId(rowId, xcamData) {
 	for (let i = 0; i < playerTotal; i++) {
 		if (xcamData.values[rowId + 1] === undefined) continue;
 		if (xcamData.values[rowId + 1][i] === undefined) continue;
+		// time data
 		var fillText = xcamData.values[rowId + 1][i].value;
 		var fillTime = rawMS(fillText);
-		if (fillTime !== null) {
-			timeList.push({
-				"player": xcamData.values[0][i].value,
-				"link": xcamData.values[rowId + 1][i].link,
-				"note": xcamData.values[rowId + 1][i].note,
-				"ms": fillTime
-			})
-		}
+		if (fillTime === null) continue;
+		// get player name (first index as special case)
+		var pName = i !== 0 ? xcamData.values[0][i].value : xcamData.values[rowId + 1][i].note;
+		if (pName === null || pName === "") pName = "-Unknown-";
+		else pName = pName.split(/\s+/)[0];
+		var note = i !== 0 ? xcamData.values[rowId + 1][i].note : "";
+		// finish cell
+		timeList.push({
+			"player": xcamData.values[0][i].value,
+			"link": xcamData.values[rowId + 1][i].link,
+			"note": xcamData.values[rowId + 1][i].note,
+			"ms": fillTime
+		});
 	}
 	timeList.sort(function(a, b) { return a.ms - b.ms });
 	return timeList;
@@ -175,6 +181,26 @@ function dumpAllXcamData(flatData, xcamData) {
 	return xcamTable;
 }
 
+function miscPlayerList(xcamData) {
+	var miscMap = {};
+	for (let i = 1; i < xcamData.ignoreTo; i++) {
+		var pName = xcamData["main"].values[0][i].value;
+		if (pName !== null && pName !== "") miscMap[pName] = 0;
+	}
+	for (const sx of ["main", "ext"]) {
+		for (let i = 1; i < xcamData[sx].values[0].length; i++) {
+			if (xcamData[sx].values[i] === undefined) continue;
+			if (xcamData[sx].values[i][0] === undefined) continue;
+			var fillText = xcamData[sx].values[i][0].value;
+			var pName = xcamData[sx].values[i][0].note;
+			if (pName === null || pName === "") continue;
+			pName = pName.split(/\s+/)[0];
+			if (fillText !== null && pName !== null && pName !== "") miscMap[pName] = 0;
+		}
+	}
+	return Object.keys(miscMap);
+}
+
 	// main dump functions
 
 function genRowData(rowData, xcamData) {
@@ -186,7 +212,9 @@ function genRowData(rowData, xcamData) {
 function genXcamData(rowData, xcamData) {
 	// read xcam data
 	var flatData = strats.flatData();
-	return dumpAllXcamData(flatData, xcamData);
+	var dumpData = dumpAllXcamData(flatData, xcamData);
+	dumpData.miscList = miscPlayerList(xcamData);
+	return dumpData;
 }
 
 
