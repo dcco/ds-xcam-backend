@@ -146,9 +146,9 @@ function timesRowId(rowId, xcamData) {
 		var note = i !== 0 ? xcamData.values[rowId + 1][i].note : "";
 		// finish cell
 		timeList.push({
-			"player": xcamData.values[0][i].value,
+			"player": pName,
 			"link": xcamData.values[rowId + 1][i].link,
-			"note": xcamData.values[rowId + 1][i].note,
+			"note": note,
 			"ms": fillTime
 		});
 	}
