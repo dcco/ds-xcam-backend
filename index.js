@@ -90,7 +90,7 @@ async function readAllXcamData() {
 	var exData = await readXSheetFull(INFO_ID, 'Main!A3:E25');
 
 	rowData = { "main": rd1, "ext": rd2 };
-	xcamData = { "main": xd1, "ext": xd2 };
+	xcamData = { "main": xd1, "ext": xd2, "ignoreTo": 6 };
 	return [rowData, xcamData, { "extra": exData }];
 }
 
