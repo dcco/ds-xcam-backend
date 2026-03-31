@@ -188,7 +188,7 @@ function miscPlayerList(xcamData) {
 		if (pName !== null && pName !== "") miscMap[pName] = 0;
 	}
 	for (const sx of ["main", "ext"]) {
-		for (let i = 1; i < xcamData[sx].values[0].length; i++) {
+		for (let i = 1; i < xcamData[sx].values.length; i++) {
 			if (xcamData[sx].values[i] === undefined) continue;
 			if (xcamData[sx].values[i][0] === undefined) continue;
 			var fillText = xcamData[sx].values[i][0].value;
