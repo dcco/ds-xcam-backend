@@ -28,7 +28,7 @@ app.listen(PORT, () => {
 	API_KEY = SECRET.key;
 
 	saveXcamData();
-	setInterval(saveXcamData, 60 * 1000);
+	scheduleArchive();
 });
 
 app.get("/test", async (req, res) => {
@@ -137,6 +137,20 @@ async function saveXcamDataWrap() {
 	} catch(error) {
 		console.log("Failed to archive Xcam data:", error);
 	}
+}
+async function scheduleArchive() {
+	const now = new Date();
+	const next = new Date(now);
+	// 11:55pm
+	next.setHours(23, 55, 0, 0);
+
+	if (next <= now) {
+		next.setDate(next.getDate() + 1)
+	}
+	const delay = next - now;
+	console.log(`Next archive scheduled for ${next}`);
+
+	setTimeout(saveXcamDataWrap, delay);
 }
 
 function responseWrap(f) {
