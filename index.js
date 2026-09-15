@@ -104,6 +104,38 @@ async function dumpXcamData() {
 	return [dumpRowData, dumpXcamData, exData];
 }
 
+function rstr(n) {
+	const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	let result = "";
+	for (let i = 0; i < n; i++) {
+		result += chars[Math.floor(Math.random() * chars.length)];
+	}
+	return result;
+}
+
+async function saveXcamData() {
+	const _data = await readAllXcamData();
+	const data = [_data[0], _data[1]];
+
+	const data = new Date().toISOString().split("T")[0];
+	const q = rstr(4);
+
+	await fs.mkdir("./archives", { recursive: true });
+	await fs.writeFile(
+		"./archives/xcam-${date}_$(q).json",
+		JSON.stringify(data, null, 2),
+		"utf8"
+	);
+}
+
+async function saveXcamDataWrap() {
+	try {
+		await saveXcamData();
+	} catch(error) {
+		console.log("Failed to archive Xcam data:", error);
+	}
+}
+
 function responseWrap(f) {
 	return async (req, res) => {
 		try {
@@ -124,3 +156,5 @@ function responseWrap(f) {
 app.get("/raw_xcams", responseWrap(readAllXcamData));
 app.get("/dump_xcams", responseWrap(dumpXcamData));
 
+saveXcamData();
+setInterval(saveXcamData, 60 * 1000);
