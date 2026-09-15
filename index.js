@@ -6,7 +6,7 @@ const SECRET = require('./secret.json');
 const dump = require('./dump.js');
 
 	// General
-const fs = require("fs");
+const fs = require("fs/promises");
 const https = require("https");
 
 	// EXPRESS SERVER constants
@@ -26,6 +26,9 @@ app.use(cors());
 app.listen(PORT, () => {
 	console.log("Server started.");
 	API_KEY = SECRET.key;
+
+	saveXcamData();
+	setInterval(saveXcamData, 60 * 1000);
 });
 
 app.get("/test", async (req, res) => {
@@ -117,12 +120,12 @@ async function saveXcamData() {
 	const _data = await readAllXcamData();
 	const data = [_data[0], _data[1]];
 
-	const data = new Date().toISOString().split("T")[0];
+	const dateStr = new Date().toISOString().split("T")[0];
 	const q = rstr(4);
 
 	await fs.mkdir("./archives", { recursive: true });
 	await fs.writeFile(
-		"./archives/xcam-${date}_$(q).json",
+		`./archives/xcam-${dateStr}.json`,
 		JSON.stringify(data, null, 2),
 		"utf8"
 	);
@@ -155,6 +158,3 @@ function responseWrap(f) {
 
 app.get("/raw_xcams", responseWrap(readAllXcamData));
 app.get("/dump_xcams", responseWrap(dumpXcamData));
-
-saveXcamData();
-setInterval(saveXcamData, 60 * 1000);
