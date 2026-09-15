@@ -80,13 +80,13 @@ async function readXSheetFull(sheetId, range) {
 
 async function readAllXcamData() {
 	var ULT_ID = '1J20aivGnvLlAuyRIMMclIFUmrkHXUzgcDmYa31gdtCI';
- 	var EXT_ID = '1X06GJL2BCy9AXjiV9Y8y-7KKkj4d9YI3dtTb2HVOyRs';
+ 	//var EXT_ID = '1X06GJL2BCy9AXjiV9Y8y-7KKkj4d9YI3dtTb2HVOyRs';
  	var INFO_ID = '1zhEY1oSb4N8BfRh03PGeyvQpsQWk-lwDGx26Ttqmm9M';
 
 	var rd1 = await readXSheetFull(ULT_ID, 'Ultimate Star Spreadsheet v2!A2:E700');
 	var xd1 = await readXSheetFull(ULT_ID, 'Ultimate Star Spreadsheet v2!F1:700');
-	var rd2 = await readXSheetFull(EXT_ID, 'Ultimate Sheet Extensions!A2:E400');
-	var xd2 = await readXSheetFull(EXT_ID, 'Ultimate Sheet Extensions!F1:400');
+	var rd2 = await readXSheetFull(ULT_ID, 'Ultimate Sheet Extensions!A2:E400');
+	var xd2 = await readXSheetFull(ULT_ID, 'Ultimate Sheet Extensions!F1:400');
 	var exData = await readXSheetFull(INFO_ID, 'Main!A3:E25');
 
 	rowData = { "main": rd1, "ext": rd2 };
